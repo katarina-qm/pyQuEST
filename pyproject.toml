@@ -7,14 +7,18 @@
 # assumptions about the structure of the "project" table that are not required by PEP 621.
 # After any substantial changes to this table, even if they conform to PEP 621, setup.py should
 # therefore be checked to ensure the data is still parsed correctly.
+
 [project]
     name = "pyquest"
-    version = "0.0.1"
+    version = "0.1.0"
     description = "A Python interface for QuEST."
-    readme = "./README.md"
+    readme = "README.md"
+
+
     license = {file = "./LICENCE.txt"}
     authors = [
         {name = "Richard Meister", email = "richardm.tug@gmail.com"},
+        {name = "Katarina Brlec", email = "katarina@quantummotion.tech"},
     ]
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
@@ -31,8 +35,13 @@
         "Programming Language :: Python :: 3 :: Only",
         "Topic :: Scientific/Engineering :: Physics",
     ]
-    requires-python = ">=3.8"
-    dependencies = ['numpy>=1.20']
+    requires-python = "==3.12.*"
+    dependencies = [
+        'numpy>=1.20',
+    ]
 
     [project.urls]
     homepage = "https://github.com/rrmeister/pyQuEST"
+
+[tool.pdm]
+distribution = false
