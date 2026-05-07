@@ -60,7 +60,7 @@ cdef class QuESTEnvironment:
     def __cinit__(self):
         """Create internals and extract environment properties."""
         self.c_env = quest.createQuESTEnv()
-        logger.info("Created QuEST Environment at " + hex(<uintptr_t>&self.c_env))
+        logger.debug("Created QuEST Environment at " + hex(<uintptr_t>&self.c_env))
         self._env_capsule = PyCapsule_New(<void*>&self.c_env, NULL, NULL)
         self._logged_registers = WeakSet()
         cdef char[200] env_str
@@ -188,7 +188,7 @@ cdef class QuESTEnvironment:
         cdef Register reg
         for reg in self._logged_registers:
             reg._destroy()
-        logger.info("Closing QuEST Environment at " + hex(<uintptr_t>&self.c_env))
+        logger.debug("Closing QuEST Environment at " + hex(<uintptr_t>&self.c_env))
         quest.destroyQuESTEnv(self.c_env)
 
 
@@ -237,7 +237,7 @@ cdef class Register:
             copy_reg._apply_delayed_operations()
             self.c_register = quest.createCloneQureg(
                 copy_reg.c_register, (<QuESTEnvironment>pyquest.env).c_env)
-        logger.info("Created quantum register at " + hex(id(self)))
+        logger.debug("Created quantum register at " + hex(id(self)))
         (<QuESTEnvironment>pyquest.env).log_register(self)
 
     def __dealloc__(self):
@@ -727,7 +727,7 @@ cdef class Register:
         state, so the object afterwards is essentially useless.
         """
         cdef Register new_owner
-        logger.info("Destroying quantum register at " + hex(id(self)))
+        logger.debug("Destroying quantum register at " + hex(id(self)))
         # Only call destroyQureg if this is a valid Qureg;
         # otherwise destroyQureg will segfault.
         if self.c_register.numAmpsTotal == 0:
