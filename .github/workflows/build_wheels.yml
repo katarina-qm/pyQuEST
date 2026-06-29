@@ -1,7 +1,5 @@
 name: Build Wheels
-
 on: [workflow_dispatch] # Allows you to run it manually from the GitHub UI
-
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -9,20 +7,12 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-
     steps:
       - uses: actions/checkout@v4
-
-      - name: Set up QEMU (Optional: for ARM Linux wheels)
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.22.0 # Check for the latest version
         env:
-          # CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*" # Optional: Limit to specific Python versions
           CIBW_ARCHS_MACOS: "x86_64 arm64" # Build for both Intel and Apple Silicon on macOS
-
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
