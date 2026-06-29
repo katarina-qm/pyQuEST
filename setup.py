@@ -148,7 +148,7 @@ def load_setup_args_from_pyproject():
 
     # We only ship one package, and it has the project's name. So we
     # just re-use that for the `packages` argument.
-    setup_args['packages'] = [project['name']]
+    setup_args['packages'] = pyproject["tool"]["setuptools"]["packages"]
 
     # This should not be necessary because we use PEP 518, but on some
     # systems (specifically Google Colab) setting up the isolated build
