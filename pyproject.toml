@@ -46,5 +46,5 @@
 [tool.pdm]
 distribution = false
 
-[tool.setuptools.packages.find]
-include = ["pyquest*"]
+[tool.setuptools]
+packages = ["pyquest"]
