@@ -1,5 +1,8 @@
 name: Build Wheels
-on: [workflow_dispatch] # Allows you to run it manually from the GitHub UI
+on:
+  workflow_dispatch:
+  push:
+    branches: [ cloverleaf-build-wheels ]
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
