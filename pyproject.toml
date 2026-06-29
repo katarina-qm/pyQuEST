@@ -9,7 +9,7 @@
 # therefore be checked to ensure the data is still parsed correctly.
 
 [project]
-    name = "pyquest"
+    name = "pyquest-ia"
     version = "0.1.0"
     description = "A Python interface for QuEST."
     readme = "README.md"
