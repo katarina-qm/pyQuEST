@@ -1,6 +1,6 @@
-name: Build
+name: Build Wheels
 
-on: [push, pull_request]
+on: [workflow_dispatch] # Allows you to run it manually from the GitHub UI
 
 jobs:
   build_wheels:
@@ -8,24 +8,20 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
+
+      - name: Set up QEMU (Optional: for ARM Linux wheels)
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.17.0
+        uses: pypa/cibuildwheel@v2.22.0 # Check for the latest version
         env:
-          # Can't use PyPy with Cython
-          CIBW_SKIP: pp*
-        #    ...
-        # with:
-        #   package-dir: .
-        #   output-dir: wheelhouse
-        #   config-file: "{package}/pyproject.toml"
+          # CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*" # Optional: Limit to specific Python versions
+          CIBW_ARCHS_MACOS: "x86_64 arm64" # Build for both Intel and Apple Silicon on macOS
 
       - uses: actions/upload-artifact@v4
         with:
