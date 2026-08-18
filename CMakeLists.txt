@@ -15,12 +15,24 @@ message(STATUS "CMake build type: ${CMAKE_BUILD_TYPE}")
 # Because building with static libraries would introduce bugs, we force
 # building a shared lib regardless of the cache variable.
 set(BUILD_SHARED_LIBS TRUE)
-# Build the QuEST library.
+
+# 1. Build the base QuEST C library target
 add_subdirectory(QuEST/QuEST)
-# To get proper exception/error handling, we must override `invalidQuESTInputError()`
-# in QuEST, which we can do by adding `pyquest/quest_exception.c` to its sources.
+
+# 2. Compile quest_exception.cpp into an isolated C++ OBJECT target.
+#    This prevents it from inheriting C-only flags (like -std=c99) assigned to QuEST.
+add_library(quest_exception_obj OBJECT ${CMAKE_SOURCE_DIR}/pyquest/quest_exception.cpp)
+
+# Dynamically pull all header search paths directly from the QuEST target
+target_include_directories(quest_exception_obj PRIVATE
+    ${CMAKE_SOURCE_DIR}/pyquest
+    $<TARGET_PROPERTY:QuEST,INCLUDE_DIRECTORIES>
+)
+
+# 3. Attach the compiled C++ object file into the main QuEST shared library
 target_include_directories(QuEST PUBLIC ${CMAKE_SOURCE_DIR}/pyquest)
-target_sources(QuEST PRIVATE ${CMAKE_SOURCE_DIR}/pyquest/quest_exception.cpp)
+target_sources(QuEST PRIVATE $<TARGET_OBJECTS:quest_exception_obj>)
+
 # For Win32 `dll`s every exported symbol must usually be marked explicitly
 # as such. Fortunately, CMake supports automatic export of all symbols (yay).
 # On non-Windows systems, this is a NOP.
