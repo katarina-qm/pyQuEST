@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 import toml
 from skbuild import setup
@@ -19,6 +21,10 @@ quest_config = {
 }
 # ----------------------------------------------------------------------
 
+
+def remove_existing_build_dir():
+    if os.path.exists('_skbuild'):
+        shutil.rmtree('_skbuild')
 
 def load_setup_args_from_pyproject():
     """Read and parse project metadata from pyproject.toml.
@@ -231,6 +237,8 @@ def quest_config_to_cmake_args(quest_config):
             + str(quest_config['gpu_compute_capability']))
     return quest_cmake_args
 
+# Remove existing _skbuild dir before installing
+remove_existing_build_dir()
 
 # `scikit-build` disables docstrings for `Release` and `MinSizeRel`
 # builds. To prevent this (in a hacky way), set the default build type
