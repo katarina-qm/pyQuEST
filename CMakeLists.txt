@@ -10,6 +10,20 @@ endif()
 message(STATUS "CMake version: ${CMAKE_VERSION}")
 message(STATUS "CMake build type: ${CMAKE_BUILD_TYPE}")
 
+# ==== Ensure Git Submodules are Synced ====
+find_package(Git QUIET)
+if(GIT_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    message(STATUS "Syncing Git submodules to target commit...")
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} submodule update --init --recursive
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        RESULT_VARIABLE GIT_SUBMOD_RESULT
+    )
+    if(NOT GIT_SUBMOD_RESULT EQUAL "0")
+        message(FATAL_ERROR "Failed to sync Git submodules")
+    endif()
+endif()
+
 # ==== QuEST ====
 # We want the QuEST library to be shared between all modules of pyQuEST.
 # Because building with static libraries would introduce bugs, we force
